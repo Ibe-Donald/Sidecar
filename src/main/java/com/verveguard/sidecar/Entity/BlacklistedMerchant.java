@@ -1,6 +1,5 @@
-package com.verveguard.sidecar.merchant;
+package com.verveguard.sidecar.Entity;
 
-import com.sun.jdi.PrimitiveValue;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

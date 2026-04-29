@@ -1,4 +1,4 @@
-package com.verveguard.sidecar.ingestion;
+package com.verveguard.sidecar.Dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

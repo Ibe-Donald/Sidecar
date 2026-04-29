@@ -1,4 +1,4 @@
-package com.verveguard.sidecar.admin;
+package com.verveguard.sidecar.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,16 +12,15 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    // This secret key acts as the ink stamp. We will store it securely in the application.yml later.
-    // It must be a long, random 256-bit string.
+
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    // The badge expires after 1 hour (3600000 milliseconds)
+    // Expires after 1 hour (3600000 milliseconds)
     private static final long EXPIRATION_TIME = 3600000;
 
 
-     // Creates a new Digital ID Badge for the admin.
+     // Creates a Token for the admin.
 
     public String generateToken(String username) {
         return Jwts.builder()
@@ -33,14 +32,14 @@ public class JwtService {
     }
 
 
-     // Reads the name on the badge.
+     // Reads the name on the Token.
 
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
 
-     // Checks if the badge is real and hasn't expired.
+     // Checks if the Token is real and hasn't expired.
 
     public boolean isTokenValid(String token, String username) {
         final String tokenUsername = extractUsername(token);

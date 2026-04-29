@@ -1,10 +1,11 @@
 package com.verveguard.sidecar.fraud;
 
 
-import com.verveguard.sidecar.ingestion.TransactionRequestDto;
-import com.verveguard.sidecar.merchant.BlacklistedMerchantRepository;
-import com.verveguard.sidecar.ratelimit.RateLimitException;
-import com.verveguard.sidecar.ratelimit.RateLimiterService;
+import com.verveguard.sidecar.Service.FraudService;
+import com.verveguard.sidecar.Dto.TransactionRequestDto;
+import com.verveguard.sidecar.Repository.BlacklistedMerchantRepository;
+import com.verveguard.sidecar.exception.RateLimitException;
+import com.verveguard.sidecar.Service.RateLimiterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

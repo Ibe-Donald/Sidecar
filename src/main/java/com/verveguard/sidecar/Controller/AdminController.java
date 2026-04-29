@@ -1,8 +1,9 @@
-package com.verveguard.sidecar.admin;
+package com.verveguard.sidecar.Controller;
 
 
-import com.verveguard.sidecar.audit.AuditJdbcRepository;
-import com.verveguard.sidecar.audit.TransactionLog;
+import com.verveguard.sidecar.Service.JwtService;
+import com.verveguard.sidecar.audit.AuditJdbc;
+import com.verveguard.sidecar.Entity.TransactionLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,15 +17,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final AuditJdbcRepository auditRepository;
-
-    // NEW: We inject the Badge Maker so we can generate testing tokens
+    private final AuditJdbc auditRepository;
     private final JwtService jwtService;
 
-    /**
-     * Requirement 4: JWT-protected GET endpoint to view flagged attempts.
-     * Only users with a valid token will ever reach this code.
-     */
     @GetMapping("/flagged-attempts")
     public ResponseEntity<List<TransactionLog>> getFlaggedTransactions() {
 
@@ -42,7 +37,6 @@ public class AdminController {
      */
     @GetMapping("/generate-token")
     public ResponseEntity<String> getTestToken() {
-        // Generate a 1-hour digital badge for a dummy admin user
         String token = jwtService.generateToken("superadmin");
         return ResponseEntity.ok(token);
     }

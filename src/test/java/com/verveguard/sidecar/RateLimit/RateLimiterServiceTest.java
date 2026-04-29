@@ -1,8 +1,8 @@
 package com.verveguard.sidecar.RateLimit;
 
 
-import com.verveguard.sidecar.ratelimit.RateLimitException;
-import com.verveguard.sidecar.ratelimit.RateLimiterService;
+import com.verveguard.sidecar.exception.RateLimitException;
+import com.verveguard.sidecar.Service.RateLimiterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

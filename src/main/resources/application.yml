@@ -7,7 +7,7 @@ spring:
   # 1. Database Connection
   datasource:
 
-    url: jdbc:sqlserver://localhost:1435;databaseName=chibuikeDB;encrypt=true;trustServerCertificate=true
+    url: jdbc:sqlserver://127.0.0.1:1435;databaseName=chibuikeDB;encrypt=true;trustServerCertificate=true
     username: sa
     password: StrongPassword@123
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver

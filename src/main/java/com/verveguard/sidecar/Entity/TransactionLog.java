@@ -1,4 +1,4 @@
-package com.verveguard.sidecar.audit;
+package com.verveguard.sidecar.Entity;
 
 import lombok.Builder;
 import lombok.Data;

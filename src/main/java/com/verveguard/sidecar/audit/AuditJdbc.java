@@ -1,21 +1,23 @@
 package com.verveguard.sidecar.audit;
 
+import com.verveguard.sidecar.Entity.TransactionLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * This handles the saving of the Transaction Logs
+ */
+
+
 @Repository
 @RequiredArgsConstructor
-public class AuditJdbcRepository {
+public class AuditJdbc {
 
     private final JdbcTemplate jdbcTemplate;
 
-
-     // Executes a raw, high-speed SQL insert.
-     // We do not insert the 'id' or 'created_at' because the database
-     // handles those automatically with DEFAULT NEWID() and DEFAULT GETDATE().
 
     public void saveLog(TransactionLog log) {
         String sql = """
@@ -34,7 +36,6 @@ public class AuditJdbcRepository {
         );
     }
 
-    // Add this inside AuditJdbcRepository.java
 
     public List<TransactionLog> getFlaggedLogs() {
         String sql = "SELECT * FROM TransactionLog WHERE status != 'APPROVED' ORDER BY createdAt DESC";

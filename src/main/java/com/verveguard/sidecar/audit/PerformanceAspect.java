@@ -2,8 +2,9 @@ package com.verveguard.sidecar.audit;
 
 
 
-import com.verveguard.sidecar.ingestion.TransactionRequestDto;
-import com.verveguard.sidecar.ratelimit.RateLimitException;
+import com.verveguard.sidecar.Dto.TransactionRequestDto;
+import com.verveguard.sidecar.Entity.TransactionLog;
+import com.verveguard.sidecar.exception.RateLimitException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,34 +12,38 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+/**
+ * Measures the execution time for each transaction
+ * Captures the final status
+ * Persist audit log to database
+ */
+
 @Aspect
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class PerformanceAspect {
 
-    private final AuditJdbcRepository auditJdbcRepository;
+    private final AuditJdbc auditJdbc;
 
 
-     // The @Around annotation tells Spring: "Intercept any call to the evaluateTransaction method."
+     // @Around annotation to Intercept any call to the evaluateTransaction method
 
-    @Around("execution(* com.verveguard.sidecar.fraud.FraudService.evaluateTransaction(..))")
+    @Around("execution(* com.verveguard.sidecar.Service.FraudService.evaluateTransaction(..))")
     public Object auditTransactionPerformance(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        // 1. Start the stopwatch
+
         long startTime = System.currentTimeMillis();
         String finalStatus;
 
-        // Extract the incoming payload (The Courier's Slip) from the method arguments
         Object[] args = joinPoint.getArgs();
         TransactionRequestDto request = (TransactionRequestDto) args[0];
 
         try {
-            // 2. Let the FraudService do its job (The 'proceed' command)
             finalStatus = (String) joinPoint.proceed();
 
         } catch (RateLimitException ex) {
-            // If the bouncer kicks them out, we catch it to log the failure, then throw it back
+
             finalStatus = "BLOCKED_RATE_LIMIT";
             saveAuditLog(request, finalStatus, startTime);
             throw ex;
@@ -49,10 +54,9 @@ public class PerformanceAspect {
             throw ex;
         }
 
-        // 3. If it succeeded (Approved or Blocked_Fraud), log it
+        // Log transaction regardless of if it is successful or not
         saveAuditLog(request, finalStatus, startTime);
 
-        // 4. Return the result back to the Controller
         return finalStatus;
     }
 
@@ -72,7 +76,6 @@ public class PerformanceAspect {
                 .executionTimeMs(executionTime)
                 .build();
 
-        // raw JDBC insert
-        auditJdbcRepository.saveLog(logEntry);
+        auditJdbc.saveLog(logEntry);
     }
 }
