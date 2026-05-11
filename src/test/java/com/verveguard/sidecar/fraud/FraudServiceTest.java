@@ -49,51 +49,45 @@ class FraudServiceTest {
 
     @Test
     void whenMerchantIsClean_thenApproveTransaction() {
-        // ARRANGE: Train the dummies
-        // Tell the rate limiter to do nothing (allow it), and the DB to say the merchant is NOT blacklisted
+
         doNothing().when(rateLimiterService).checkLimit(anyString());
         when(merchantRepository.existsByMerchantId("MERCH-999")).thenReturn(false);
 
-        // ACT: Run the real method
+
         String result = fraudService.evaluateTransaction(testRequest);
 
-        // ASSERT: Prove it worked
+
         assertEquals("APPROVED", result);
 
-        // Bonus: Prove the service actually talked to the dummies exactly one time
+
         verify(rateLimiterService, times(1)).checkLimit("192.168.1.5");
         verify(merchantRepository, times(1)).existsByMerchantId("MERCH-999");
     }
 
     @Test
     void whenMerchantIsBlacklisted_thenBlockTransaction() {
-        // ARRANGE
+
         doNothing().when(rateLimiterService).checkLimit(anyString());
         when(merchantRepository.existsByMerchantId("MERCH-999")).thenReturn(true);
 
-        // ACT
+
         String result = fraudService.evaluateTransaction(testRequest);
 
-        // ASSERT
+
         assertEquals("BLOCKED_FRAUD", result);
         verify(merchantRepository, times(1)).existsByMerchantId("MERCH-999");
     }
 
     @Test
     void whenRateLimitExceeded_thenThrowException() {
-        // ARRANGE
-        // Train the bouncer to violently throw an error when this IP shows up
+
         doThrow(new RateLimitException("Too many requests"))
                 .when(rateLimiterService).checkLimit("192.168.1.5");
 
-        // ACT & ASSERT
-        // We assert that calling the service actively triggers the Exception
         assertThrows(RateLimitException.class, () -> {
             fraudService.evaluateTransaction(testRequest);
         });
 
-        // CRUCIAL SECURITY CHECK: Prove the "Fail-Fast" mechanism works.
-        // Because the bouncer threw them out, the database should NEVER have been queried.
         verify(merchantRepository, never()).existsByMerchantId(anyString());
     }
 }

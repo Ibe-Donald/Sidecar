@@ -22,9 +22,10 @@ public class JwtService {
 
      // Creates a Token for the admin.
 
-    public String generateToken(String username) {
+    public String generateToken(String emailAddress, String role) {
         return Jwts.builder()
-                .subject(username)
+                .subject(emailAddress)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(getSigningKey())
