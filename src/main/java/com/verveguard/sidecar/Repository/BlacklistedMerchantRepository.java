@@ -10,9 +10,7 @@ import java.util.UUID;
 @Repository
 public interface BlacklistedMerchantRepository extends JpaRepository<BlacklistedMerchant, UUID> {
 
-
     @Cacheable(value = "blacklistCache", key = "#merchantId")
-
     boolean existsByMerchantId(String merchantId);
 
 }

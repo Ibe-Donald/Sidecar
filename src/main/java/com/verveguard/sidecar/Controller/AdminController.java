@@ -12,6 +12,10 @@ import com.verveguard.sidecar.audit.AuditJdbc;
 import com.verveguard.sidecar.Entity.TransactionLog;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -47,10 +51,10 @@ public class AdminController {
     }
 
     @GetMapping("/flagged-attempts")
-    public ResponseEntity<List<TransactionLog>> getFlaggedTransactions() {
+    public ResponseEntity<Page<TransactionLog>> getFlaggedTransactions(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        // Fetch all transactions that were not approved
-        List<TransactionLog> flaggedLogs = auditRepository.getFlaggedLogs();
+        Page<TransactionLog> flaggedLogs = auditRepository.getFlaggedLogs(pageable);
 
         return ResponseEntity.ok(flaggedLogs);
     }
