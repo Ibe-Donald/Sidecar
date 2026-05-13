@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/login").permitAll()
                                 .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/v1/admin/flagged-attempts").authenticated()
+                        .requestMatchers("/api/v1/blacklisted-merchants").authenticated()
                 )
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

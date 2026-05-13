@@ -33,18 +33,18 @@ public class JwtService {
     }
 
 
-     // Reads the name on the Token.
+     // Reads the emailAddress on the Token.
 
-    public String extractUsername(String token) {
+    public String extractEmailAddress(String token) {
         return extractAllClaims(token).getSubject();
     }
 
 
      // Checks if the Token is real and hasn't expired.
 
-    public boolean isTokenValid(String token, String username) {
-        final String tokenUsername = extractUsername(token);
-        return (tokenUsername.equals(username)) && !isTokenExpired(token);
+    public boolean isTokenValid(String token, String emailAddress) {
+        final String tokenEmailAddress = extractEmailAddress(token);
+        return (tokenEmailAddress.equals(emailAddress)) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
