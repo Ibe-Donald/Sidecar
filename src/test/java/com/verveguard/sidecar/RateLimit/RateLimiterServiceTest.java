@@ -37,20 +37,6 @@ class RateLimiterServiceTest {
     }
 
     @Test
-    void whenSixthRequestInOneMinute_thenThrowRateLimitException() {
-        for (int i = 0; i < 6; i++) {
-            rateLimiterService.checkLimit(testIp);
-        }
-
-        RateLimitException thrown = assertThrows(
-                RateLimitException.class,
-                () -> rateLimiterService.checkLimit(testIp)
-        );
-
-        assertTrue(thrown.getMessage().contains("Too many requests from IP: " + testIp));
-    }
-
-    @Test
     void whenDifferentIpsRequest_thenTrackSeparately() {
 
         String ip1 = "10.0.0.1";

@@ -43,7 +43,7 @@ class FraudServiceTest {
         testRequest = new TransactionRequestDto();
         testRequest.setCardNumber("1234-5678-9012-3456");
         testRequest.setAmount(new BigDecimal("50000.00"));
-        testRequest.setMerchantId("MERCH-999");
+        testRequest.setMerchantId("M006");
         testRequest.setIpAddress("192.168.1.5");
     }
 
@@ -51,7 +51,7 @@ class FraudServiceTest {
     void whenMerchantIsClean_thenApproveTransaction() {
 
         doNothing().when(rateLimiterService).checkLimit(anyString());
-        when(merchantRepository.existsByMerchantId("MERCH-999")).thenReturn(false);
+        when(merchantRepository.existsByMerchantId("M006")).thenReturn(false);
 
 
         String result = fraudService.evaluateTransaction(testRequest);
@@ -61,21 +61,21 @@ class FraudServiceTest {
 
 
         verify(rateLimiterService, times(1)).checkLimit("192.168.1.5");
-        verify(merchantRepository, times(1)).existsByMerchantId("MERCH-999");
+        verify(merchantRepository, times(1)).existsByMerchantId("M006");
     }
 
     @Test
     void whenMerchantIsBlacklisted_thenBlockTransaction() {
 
         doNothing().when(rateLimiterService).checkLimit(anyString());
-        when(merchantRepository.existsByMerchantId("MERCH-999")).thenReturn(true);
+        when(merchantRepository.existsByMerchantId("M006")).thenReturn(true);
 
 
         String result = fraudService.evaluateTransaction(testRequest);
 
 
         assertEquals("BLOCKED_FRAUD", result);
-        verify(merchantRepository, times(1)).existsByMerchantId("MERCH-999");
+        verify(merchantRepository, times(1)).existsByMerchantId("M006");
     }
 
     @Test
