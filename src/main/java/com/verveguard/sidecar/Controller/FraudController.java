@@ -25,17 +25,10 @@ public class FraudController {
 
     @PostMapping("/verify")
     public ResponseEntity<Map<String, String>> verifyTransaction(
-            @Valid @RequestBody TransactionRequestDto incomingRequest,
-            HttpServletRequest httpRequest) {
-
-        // Extract the true network IP address to prevent spoofing
-        String realIpAddress = extractIpAddress(httpRequest);
-
-        //override the IP in the JSON body
-        incomingRequest.setIpAddress(realIpAddress);
+            @Valid @RequestBody TransactionRequestDto incomingRequest) {
 
         log.info("Received transaction request for merchant: {} from IP: {}",
-                incomingRequest.getMerchantId(), realIpAddress);
+                incomingRequest.getMerchantId(), incomingRequest.getIpAddress());
 
         String status = fraudService.evaluateTransaction(incomingRequest);
 
@@ -44,27 +37,11 @@ public class FraudController {
         response.put("merchantId", incomingRequest.getMerchantId());
 
         if ("APPROVED".equals(status)) {
-            // 200 OK
+
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
     }
 
-
-     // Helper method to accurately extract the client IP.
-
-    private String extractIpAddress(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-
-        if (ip != null && ip.contains(",")) {
-            ip = ip.split(",")[0].trim();
-        }
-
-        return ip;
-    }
 }
